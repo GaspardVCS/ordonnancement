@@ -2,14 +2,16 @@ import numpy as np
 from utils import generate_jobs_sample, generate_machines_sample
 from copy import deepcopy
 
-np.random.seed(10)
+seed = 18
+# np.random.seed(seed)
 
 class CloGeneticAlgorithm:
     def __init__(self, jobs, machines) -> None:
         self.jobs = jobs
         self.machines = machines
-        self.prop_to_mutate = 0.5
-        self.population_size = 200
+        self.prop_to_mutate = 0.3
+        self.population_size = 100
+        self.verbose = False
         self.population = self.random_population(self.population_size)
 
     def random_allocation(self):
@@ -141,7 +143,7 @@ class CloGeneticAlgorithm:
         """
         finishing_times = self.finished_times(allocation)
         cost = 0
-        for i, job in enumerate(jobs):
+        for i, job in enumerate(self.jobs):
             job_finish_time = finishing_times[i][-1]
             if job_finish_time > job[-2]:
                 cost += job[-1]
@@ -187,7 +189,19 @@ class CloGeneticAlgorithm:
                 new_generation[i] = self.mutation(a)
         self.population = new_generation
         mean_cost = np.mean(list(map(lambda x: self.fitness_function(x), new_generation)))
-        print(f'{self.fitness_function(self.best_allocation())}')
+        if self.verbose:
+            print(f'{self.fitness_function(self.best_allocation())}')
+            print(f'number of late jobs: {self.number_late_jobs(self.best_allocation())}')
+    
+
+    def number_late_jobs(self, allocation):
+        finishing_times = self.finished_times(allocation)
+        late_jobs = 0
+        for i, job in enumerate(self.jobs):
+            job_finish_time = finishing_times[i][-1]
+            if job_finish_time > job[-2]:
+                late_jobs += 1
+        return late_jobs
 
 
     def best_allocation(self):
@@ -200,8 +214,15 @@ class CloGeneticAlgorithm:
 
 if __name__ == '__main__':
     # Generate the data randomly
-    jobs = generate_jobs_sample(n_jobs=8)
+    jobs = generate_jobs_sample(n_jobs=4)
+    for job in jobs:
+        print(job)
     machines = generate_machines_sample()
+    for machine in machines:
+        print(machine)
     cga = CloGeneticAlgorithm(jobs=jobs, machines=machines)
-    for _ in range(100):
-        cga.next_generation()    
+    for _ in range(200):
+        cga.next_generation()
+    best_allocation = cga.best_allocation()
+    print(cga.number_late_jobs(best_allocation)) 
+    print(cga.fitness_function(best_allocation)) 
