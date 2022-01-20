@@ -193,7 +193,6 @@ class CloGeneticAlgorithm:
             print(f'{self.fitness_function(self.best_allocation())}')
             print(f'number of late jobs: {self.number_late_jobs(self.best_allocation())}')
     
-
     def number_late_jobs(self, allocation):
         finishing_times = self.finished_times(allocation)
         late_jobs = 0
@@ -203,7 +202,6 @@ class CloGeneticAlgorithm:
                 late_jobs += 1
         return late_jobs
 
-
     def best_allocation(self):
         """
         Get the best allocation in the current population
@@ -211,18 +209,3 @@ class CloGeneticAlgorithm:
             best allocation
         """
         return min(self.population, key=lambda x: self.fitness_function(x))
-
-if __name__ == '__main__':
-    # Generate the data randomly
-    jobs = generate_jobs_sample(n_jobs=4)
-    for job in jobs:
-        print(job)
-    machines = generate_machines_sample()
-    for machine in machines:
-        print(machine)
-    cga = CloGeneticAlgorithm(jobs=jobs, machines=machines)
-    for _ in range(200):
-        cga.next_generation()
-    best_allocation = cga.best_allocation()
-    print(cga.number_late_jobs(best_allocation)) 
-    print(cga.fitness_function(best_allocation)) 
