@@ -16,7 +16,7 @@ def generate_jobs_sample(n_jobs=5):
         machines_assignement = np.random.permutation([1, 2, 3]) # random machine assignement order
         task_times = np.random.randint(1, 6, size=3) # time taken by each task 
         due_date = np.sum(task_times) + int(np.random.randint(15, size=1)) # if the job finishes after that date, it is considered late
-        cost = np.random.randint(10)
+        cost = np.random.randint(1, 10)
         job = list(zip(machines_assignement, task_times, [i] * 3)) + [due_date, cost]
         jobs.append(job)
     return jobs
