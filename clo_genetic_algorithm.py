@@ -1,4 +1,3 @@
-from platform import machine
 import numpy as np
 from utils import generate_jobs_sample, generate_machines_sample
 from copy import deepcopy
@@ -148,14 +147,27 @@ class CloGeneticAlgorithm:
                 cost += job[-1]
         return cost
 
-    def random_population(self, n_allocation=20):
-        population = [self.random_allocation() for _ in range(n_allocation)]
+    def random_population(self, population_size=20):
+        """
+        Generate a random list of feasible allocations
+        Parameters:
+            population_size (int): number of allocation to generate
+        Returns:
+            population (list): list of allocations     
+        """
+        population = [self.random_allocation() for _ in range(population_size)]
         return population
 
     def next_generation(self):
-        pop = self.random_population()
-        best_a = min(pop, key=lambda x: self.fitness_function(x))
-        print(f'Best allocation has a cost of {self.fitness_function(best_a)}')
+        """
+        Generate the next generation. Update the self.population attribute
+        Keep the 50% best allocations from the old generation.
+        Then create the remaining 50% with crossovers between two allocations 
+        of the best 50% of the old generation.
+        Randomly mutate chromosomes in the resulting population.
+        Parameters: None
+        Returns: None
+        """
         old_generation = sorted(self.population, key=lambda x: self.fitness_function(x))
         n = len(old_generation) // 2
         new_generation = old_generation[:n]
@@ -179,6 +191,11 @@ class CloGeneticAlgorithm:
 
 
     def best_allocation(self):
+        """
+        Get the best allocation in the current population
+        Returns:
+            best allocation
+        """
         return min(self.population, key=lambda x: self.fitness_function(x))
 
 if __name__ == '__main__':
